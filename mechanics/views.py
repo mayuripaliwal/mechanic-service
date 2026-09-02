@@ -57,7 +57,10 @@ class MechanicDetailView(APIView):
         try: 
             mechanic=Mechanic.objects.get(id=id)
         except Mechanic.DoesNotExist:
-            return Response(status=404)
+            return Response(
+                {"detail":f"Mechanic with id {id} does not exist."},
+                status=404
+                )
 
         serializer=MechanicSerializer(mechanic,data=request.data)
         
@@ -73,7 +76,11 @@ class MechanicDetailView(APIView):
         try:
             mechanic=Mechanic.objects.get(id=id)
         except Mechanic.DoesNotExist:
-            return Response(status=404)
+            return Response(
+                {"detail":f"Mechanic with id {id} does not exist."},
+                status=404
+            )
+        
 
         serializer=MechanicSerializer(mechanic,data=request.data,partial=True)
 
@@ -93,7 +100,10 @@ class MechanicDetailView(APIView):
         try:
             mechanic=Mechanic.objects.get(id=id)
         except Mechanic.DoesNotExist:
-            return Response(status=404)
+            return Response(
+                {"detail":f"Mechanic with id {id} does not exist."},
+                status=404
+            )
         
         mechanic.delete()
 
