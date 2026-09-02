@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.core.validators import MinValueValidator,MaxValueValidator
 # Create your models here.
 # Model for mechanic table
 class Mechanic(models.Model):
@@ -7,7 +7,14 @@ class Mechanic(models.Model):
     name=models.CharField(max_length=100)
     phone=models.CharField(max_length=10)
     location=models.CharField(max_length=255)
-    rating=models.DecimalField(max_digits=2,decimal_places=1)
+    rating=models.DecimalField(
+        max_digits=2,
+        decimal_places=1,
+        validators=[
+            MinValueValidator(0.0),
+            MaxValueValidator(5.0)
+        ]
+    )
     is_open=models.BooleanField(default=True)
     services=models.JSONField(default=list)
 

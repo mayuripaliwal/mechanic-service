@@ -9,6 +9,13 @@ class MechanicSerializer(serializers.ModelSerializer):
         model=Mechanic
         fields="__all__"
 
+    #handle invalid mechanic phone number
+    def validate_mechanic_phone(self,value):
+        if len(value)!=10 or not value.isdigit():
+            raise serializers.ValidationError("Mechanic phone number must be a 10-digit number.")
+
+        return value
+
 # Serializer for service request model
 class ServiceRequestSerializer(serializers.ModelSerializer):
     mechanic_id=serializers.PrimaryKeyRelatedField(
