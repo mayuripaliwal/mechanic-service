@@ -389,7 +389,7 @@ def test_service_request_invalid_service():
     response = client.post(
         "/service-requests/",
         data={
-            "customer_name": "Mayuri",
+            "customer_name": "XYZ",
             "customer_phone": "9876543210",
             "vehicle_number": "DL01AB1234",
             "mechanic_id": mechanic_id,
@@ -411,7 +411,7 @@ def test_service_request_invalid_mechanic_id():
     response = client.post(
         "/service-requests/",
         data={
-            "customer_name": "Mayuri",
+            "customer_name": "XYZ",
             "customer_phone": "9876543210",
             "vehicle_number": "DL01AB1234",
             "mechanic_id": "abc",
