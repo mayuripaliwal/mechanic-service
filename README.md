@@ -150,6 +150,37 @@ flowchart LR
 A newly created service request automatically receives a `PENDING` status and a `created_at` timestamp.
 
 ---
+## Sample API Request / Response
+
+### Create Service Request
+
+**Request**
+
+```json
+{
+    "customer_name": "XYZ",
+    "customer_phone": "9876543210",
+    "vehicle_number": "DL01AB1234",
+    "mechanic_id": 1,
+    "service": "Oil Change",
+    "problem_description": "Engine making noise"
+}
+```
+**Response**
+```json
+{
+    "id": 1,
+    "customer_name": "XYZ",
+    "customer_phone": "9876543210",
+    "vehicle_number": "DL01AB1234",
+    "mechanic_id": 1,
+    "service": "Oil Change",
+    "problem_description": "Engine making noise",
+    "status": "PENDING",
+    "created_at": "2026-09-02T03:38:58.251142Z"
+}
+```
+---
 
 ## Testing
 
