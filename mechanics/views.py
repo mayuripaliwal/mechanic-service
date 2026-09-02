@@ -28,7 +28,7 @@ class MechanicListView(APIView):
 
             return Response(serializer.data,status=201)
 
-        # if customer request is not valid, return 400
+        # if request is not valid, return 400
         return Response(serializer.errors,status=400)
 
 class MechanicDetailView(APIView):
@@ -40,7 +40,9 @@ class MechanicDetailView(APIView):
         try:
             mechanic=Mechanic.objects.get(id=id)
         except Mechanic.DoesNotExist:
-            return Response(status=404)
+            return Response(
+                {"detail":f"Mechanic with id {id} does not exist."},
+                status=404)
         
         serializer=MechanicSerializer(mechanic)
 
