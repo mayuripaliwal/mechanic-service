@@ -8,6 +8,10 @@ A RESTful backend API for a mechanic-service platform where customers can view m
 * Django
 * Django REST Framework
 * SQLite
+* pytest
+* pytest-django
+
+---
 
 ## Project Setup
 
@@ -15,6 +19,7 @@ A RESTful backend API for a mechanic-service platform where customers can view m
 
 ```bash
 git clone https://github.com/mayuripaliwal/mechanic-service
+
 cd mechanic-service
 ```
 
@@ -94,386 +99,69 @@ The `ServiceRequest` model stores customer service requests.
 | `status`              | CharField     | Request status, defaults to `PENDING`      |
 | `created_at`          | DateTimeField | Automatically generated creation timestamp |
 
-> `mechanics_servicerequest.mechanic` is a foreign key referencing `mechanics_mechanic.id`
-
-### Relationship
-
-Each service request is associated with one mechanic through the `mechanic_id` foreign key, which references the `id` primary key of the mechanic.
+> The `ServiceRequest.mechanic_id` field creates a foreign key relationship to `Mechanic`.
 
 ```mermaid
 flowchart LR
-Mechanic[Mechanic]
-ServiceRequest[Service Request]
-ServiceRequest-->|mechanic_id references id |Mechanic
-```
+    Mechanic[Mechanic]
+    ServiceRequest[Service Request]
 
----
+    ServiceRequest -->|mechanic_id references id| Mechanic
+```
 
 ## API Documentation
 
 ### Mechanic APIs
 
-#### Get All Mechanics
+| Method | Endpoint | Description |
+|---|---|---|
+| GET | `/mechanics/` | Get all mechanics |
+| POST | `/mechanics/` | Create a new mechanic |
+| GET | `/mechanics/<id>/` | Get a mechanic by ID |
+| PUT | `/mechanics/<id>/` | Replace a mechanic |
+| PATCH | `/mechanics/<id>/` | Partially update a mechanic |
+| DELETE | `/mechanics/<id>/` | Delete a mechanic |
 
-```http
-GET /mechanics/
-```
+### Service Request API
 
-Returns all mechanics.
+| Method | Endpoint | Description |
+|---|---|---|
+| POST | `/service-requests/` | Create a new service request |
 
-**Response: `200 OK`**
+### Service Request Fields
 
-```json
-[
-    {
-        "id": 1,
-        "name": "ABC Motors",
-        "phone": "9876543210",
-        "location": "Delhi",
-        "rating": "4.5",
-        "is_open": true,
-        "services": [
-            "Oil Change",
-            "Brake Repair"
-        ]
-    }
-]
-```
+| Field | Required | Description |
+|---|---|---|
+| `customer_name` | Yes | Customer's name |
+| `customer_phone` | Yes | 10-digit customer phone number |
+| `vehicle_number` | Yes | Vehicle registration number |
+| `mechanic_id` | Yes | ID of the selected mechanic |
+| `service` | Yes | Service requested from the mechanic |
+| `problem_description` | Yes | Description of the vehicle problem |
 
----
-
-#### Get Mechanic by ID
-
-```http
-GET /mechanics/<id>/
-```
-
-Returns the mechanic with the specified ID.
-
-**Response: `200 OK`**
-
-```json
-{
-    "id": 1,
-    "name": "ABC Motors",
-    "phone": "9876543210",
-    "location": "Delhi",
-    "rating": "4.5",
-    "is_open": true,
-    "services": [
-        "Oil Change",
-        "Brake Repair"
-    ]
-}
-```
-
-If the mechanic does not exist:
-
-```json
-404 Not Found
-
-{
-    "detail": "Mechanic with id 1 does not exist."
-}
-```
----
-
-#### Add a Mechanic
-
-```http
-POST /mechanics/
-```
-
-**Request**
-
-```json
-{
-    "name": "ABC Motors",
-    "phone": "9876543210",
-    "location": "Delhi",
-    "rating": "4.5",
-    "is_open": true,
-    "services": [
-        "Oil Change",
-        "Brake Repair"
-    ]
-}
-```
-
-**Response: `201 Created`**
-
-```json
-{
-    "id": 1,
-    "name": "ABC Motors",
-    "phone": "9876543210",
-    "location": "Delhi",
-    "rating": "4.5",
-    "is_open": true,
-    "services": [
-        "Oil Change",
-        "Brake Repair"
-    ]
-}
-```
+A newly created service request automatically receives a `PENDING` status and a `created_at` timestamp.
 
 ---
 
-#### Update a Mechanic
+## Testing
 
-```http
-PUT /mechanics/<id>/
+The project uses `pytest` and `pytest-django` for automated API testing.
+
+Run the test suite with:
+
+```bash
+pytest
 ```
 
-Replaces the mechanic details.
-
-**Request**
-
-```json
-{
-    "name": "ABC Motors",
-    "phone": "9876543210",
-    "location": "Noida",
-    "rating": "4.8",
-    "is_open": true,
-    "services": [
-        "Oil Change",
-        "Brake Repair",
-        "Engine Repair"
-    ]
-}
-```
-
-**Response: `200 OK`**
-
-Returns the updated mechanic.
-
----
-
-#### Partially Update a Mechanic
-
-```http
-PATCH /mechanics/<id>/
-```
-
-Updates only the fields provided in the request.
-
-**Request**
-
-```json
-{
-    "rating": "4.8",
-    "is_open": false
-}
-```
-
-**Response: `200 OK`**
-
-Returns the updated mechanic.
-
----
-
-#### Delete a Mechanic
-
-```http
-DELETE /mechanics/<id>/
-```
-
-Deletes the mechanic.
-
-**Response: `204 No Content`**
-
-If the mechanic does not exist:
-
-```http
-404 Not Found
-```
-
----
-
-## Service Request API
-
-### Create a Service Request
-
-```http
-POST /service-requests/
-```
-
-Creates a new service request for an existing mechanic.
-
-**Request**
-
-```json
-{
-    "customer_name": "Mayuri",
-    "customer_phone": "9876543210",
-    "vehicle_number": "DL01AB1234",
-    "mechanic_id": 1,
-    "service": "Oil Change",
-    "problem_description": "Engine making noise"
-}
-```
-
-**Response: `201 Created`**
-
-```json
-{
-    "id": 1,
-    "customer_name": "Mayuri",
-    "customer_phone": "9876543210",
-    "vehicle_number": "DL01AB1234",
-    "service": "Oil Change",
-    "problem_description": "Engine making noise",
-    "status": "PENDING",
-    "created_at": "2026-09-02T03:38:58.251142Z",
-    "mechanic_id": 1
-}
-```
-
-The `status` is automatically set to `PENDING`, and `created_at` is automatically generated when the request is created.
-
----
-
-## Validation & Error Handling
-
-The API validates incoming data and returns appropriate HTTP status codes with meaningful error messages.
-
-### Required Fields
-
-Missing required fields result in:
-
-```http
-400 Bad Request
-```
-
-Example:
-
-```json
-{
-    "customer_name": [
-        "This field is required."
-    ]
-}
-```
-
-### Invalid Phone Number
-
-Customer phone numbers must contain exactly 10 digits.
-
-Example:
-
-```json
-{
-    "customer_phone": "98765abc"
-}
-```
-
-Response:
-
-```json
-400 Bad Request
-{
-    "customer_phone": [
-        "Customer phone number must be a 10-digit number."
-    ]
-}
-```
-
-### Invalid Vehicle Number
-
-Vehicle numbers are validated against the following simplified format:
-
-```text
-XX00XX0000
-```
-
-Example:
-
-```text
-DL01AB1234
-```
-
-Invalid vehicle numbers result in:
-
-```json
-400 Bad Request
-
-{
-    "vehicle_number": [
-        "Vehicle number must be in the format: XX00XX0000 (e.g., MH12AB1234)."
-    ]
-}
-```
-
-### Invalid Mechanic ID
-
-The supplied `mechanic_id` must refer to an existing mechanic.
-
-If the mechanic does not exist:
-
-```http
-400 Bad Request
-```
-
-```json
-{
-    "mechanic_id": [
-        "Mechanic with the given id does not exist."
-    ]
-}
-```
-
-Invalid mechanic ID types are also rejected by the serializer.
-
-### Invalid Service
-
-The requested service must be provided by the selected mechanic.
-
-If the selected mechanic does not provide the requested service:
-
-```http
-400 Bad Request
-```
-
-Example error:
-
-```json
-{
-    "service": [
-        "This service is not provided by the selected mechanic."
-    ]
-}
-```
-
-### Invalid Mechanic Rating
-
-Mechanic ratings must be between `0.0` and `5.0`.
-
-```text
-0.0 <= rating <= 5.0
-```
-
-Values outside this range result in:
-
-```http
-400 Bad Request
-```
-
----
-
-## Vehicle Number Format
-
-This implementation uses a simplified vehicle registration format:
-
-```text
-XX00XX0000
-```
-
-Examples:
-
-```text
-DL01AB1234
-MH12AB1234
-```
-
-> Note: The validation is intentionally simplified and does not cover specialized registration formats such as BH-series registrations.
+The test suite covers:
+
+* Mechanic CRUD operations
+* Service request creation
+* Required field validation
+* Invalid phone numbers
+* Invalid vehicle numbers
+* Invalid mechanic IDs
+* Nonexistent mechanics
+* Invalid services
+* Invalid mechanic ratings
+* Appropriate HTTP status codes and error responses
