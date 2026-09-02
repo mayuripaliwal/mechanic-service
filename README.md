@@ -57,11 +57,18 @@ python manage.py migrate
 python manage.py runserver
 ```
 
+API documentation will be available at:
+
+```text
+http://127.0.0.1:8000/docs
+```
+
 The API will be available at:
 
 ```text
 http://127.0.0.1:8000/
 ```
+
 
 ---
 
@@ -165,3 +172,17 @@ The test suite covers:
 * Invalid services
 * Invalid mechanic ratings
 * Appropriate HTTP status codes and error responses
+
+## Engineering Trade-offs
+
+Due to the time constraints, I prioritized the core functionality, testing, and documentation.
+
+- **Database:** Used SQLite for faster setup. For a production system, I would prefer PostgreSQL.
+
+- **Testing:** Used `pytest` based on my familiarity with it and focused on testing the core APIs and validation cases.
+
+- **API Documentation:** Added Swagger/OpenAPI to make the API easier to understand and test.
+
+- **Vehicle Validation:** Supported common vehicle number formats instead of covering specialized formats such as BH-series registrations.
+
+- **Scope:** Prioritized core APIs, validation, error handling, tests, and documentation over additional features.
