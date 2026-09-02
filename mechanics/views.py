@@ -4,6 +4,7 @@ from .models import Mechanic
 from .serializers import MechanicSerializer
 from rest_framework.response import Response
 from rest_framework import status
+from .serializers import ServiceRequestSerializer
 # Create your views here.
 
 class MechanicListView(APIView):
@@ -96,6 +97,20 @@ class MechanicDetailView(APIView):
 
         return Response(status=204)
 
+
+#API for service requests
+class ServiceRequestView(APIView):
+    #this api creates a new service request
+    def post(self,request):
+        #first check is this a valid request
+        serializer=ServiceRequestSerializer(data=request.data)
+
+        if serializer.is_valid():
+            serializer.save()
+
+            return Response(serializer.data,status=201)
+        
+        return Response(serializer.errors,status=400)
 
 
     
